@@ -10,6 +10,7 @@ import copy from './commands/fs/copy.js';
 import renameFile from './commands/fs/rename.js';
 import read from './commands/fs/read.js';
 import deleteFile from './commands/fs/delete.js';
+import calculateHash from './commands/hash/calcHash.js';
 
 
 
@@ -61,8 +62,8 @@ const rl = readlinePromises.createInterface({
 		 read(words[1]);
 		 break;
 
-		 case 'os --EOL':
-			eol(words[1]);
+		 case 'hash':
+	 calculateHash(words[1]);
 			break;
  
 	  case 'delete':

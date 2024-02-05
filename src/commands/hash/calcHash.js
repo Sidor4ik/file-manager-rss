@@ -1,21 +1,30 @@
-import { createHash } from 'crypto'
-import { createReadStream } from 'fs'
-import path from 'path'
+import { createHash } from 'crypto';
+import { createReadStream, promises as fsPromises } from 'fs';
+import path from 'path';
+import yourPath from '../../utils/path.js';
+import ERROR from "../../utils/error.js";
 
-const calculateHash = async () => {
-  const fileName = path.resolve('src/hash/files/fileToCalculateHashFor.txt')
+export default async function calculateHash(filePath) {
+  try {
+    const resolvedPath = path.resolve(filePath);
 
-  const hash = createHash('sha256')
+    await fsPromises.access(resolvedPath);
 
-  const readStream = createReadStream(fileName, { encoding: 'utf-8' })
+    const hash = createHash('sha256');
+    const readStream = createReadStream(resolvedPath, { encoding: 'utf-8' });
 
-  readStream.on('data', (data) => {
-    hash.update(data)
-  })
+    readStream.on('data', (data) => {
+      hash.update(data);
+    });
 
-  readStream.on('end', () => {
-    process.stdout.write(hash.digest('hex'))
-  })
+    readStream.on('end', () => {
+      console.log(hash.digest('hex'));
+      yourPath();
+    });
+  } catch (error) {
+    console.log(ERROR.FS_OPERATION_FAILED);
+  }
 }
 
 await calculateHash()
+
